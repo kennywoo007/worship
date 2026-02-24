@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NewSong Worship V8.5 - 移动优化版</title>
+    <title>NewSong Worship V8.6 - 交互增强版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;600;900&display=swap');
         body { font-family: 'Noto Serif SC', serif; background-color: #050505; color: #fff; overflow: hidden; height: 100vh; width: 100vw; display: flex; flex-direction: row; }
         
+        /* 电脑侧边栏样式 */
         .sidebar-dark { background-color: #000; border-right: 1px solid #1a1a1a; width: 208px; flex-shrink: 0; display: flex; flex-direction: column; z-index: 50; }
         .main-content { flex: 1; position: relative; overflow: hidden; display: flex; flex-direction: column; height: 100vh; }
         
@@ -26,37 +27,30 @@
         @keyframes textFadeUp { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
         .fade-up { opacity: 0; }
         .do-fade-up { animation: textFadeUp 1.5s ease-out forwards; }
-        .delay-1 { animation-delay: 0.5s; }
-        .delay-2 { animation-delay: 1.5s; }
-        .delay-3 { animation-delay: 2.5s; }
+        
+        /* 手机端底部导航条 */
+        .bottom-nav { background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); border-top: 1px solid #1a1a1a; height: 70px; display: none; position: fixed; bottom: 0; width: 100%; z-index: 100; }
+        
+        /* 弹出菜单样式 */
+        #mobile-more-menu { background: rgba(10,10,10,0.98); backdrop-filter: blur(30px); border-top: 1px solid rgba(255,255,255,0.1); border-radius: 24px 24px 0 0; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        #mobile-more-menu.open { transform: translateY(0); }
 
         .history-split { display: flex; height: 100%; overflow: hidden; }
         .history-player-panel { width: 350px; border-right: 1px solid rgba(255,255,255,0.05); padding: 2rem; display: flex; flex-direction: column; justify-content: center; }
         .history-list-panel { flex: 1; overflow-y: auto; padding: 2rem; padding-bottom: 150px; }
-        .weekly-track-item { background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); transition: all 0.3s ease; }
-        
+
         input[type="range"] { -webkit-appearance: none; background: rgba(255,255,255,0.1); border-radius: 5px; height: 4px; cursor: pointer; background-image: linear-gradient(#f97316, #f97316); background-repeat: no-repeat; }
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 14px; background: #f97316; border-radius: 50%; border: 2px solid #fff; }
-        .admin-panel { background: #0a0a0a; border-radius: 20px; border: 1px solid #262626; }
 
-        /* 手机端适配逻辑 */
         @media (max-width: 768px) {
             body { flex-direction: column; }
-            .sidebar-dark { width: 100%; height: auto; border-right: none; border-bottom: 1px solid #1a1a1a; flex-direction: row; overflow-x: auto; padding: 8px; flex-shrink: 0; }
-            .sidebar-logo, .sidebar-tag, .admin-entry-pc { display: none !important; }
-            .sidebar-nav { display: flex; flex-direction: row; gap: 8px; white-space: nowrap; width: auto; padding: 0 5px; }
-            .nav-link { flex-shrink: 0; padding: 6px 12px !important; font-size: 13px; display: flex; align-items: center; gap: 4px; border-radius: 999px; background: rgba(255,255,255,0.05); }
-            .nav-link.active { background: rgba(249, 115, 22, 0.2); }
-            
-            /* 内容区适配：确保底部留出 footer 的空间 */
+            .sidebar-dark { display: none; }
+            .bottom-nav { display: flex; justify-content: space-around; align-items: center; }
             .main-content { height: auto; flex: 1; overflow: hidden; }
-            #display-title { font-size: 2.2rem !important; margin-bottom: 1rem; line-height: 1.2; }
+            #display-title { font-size: 2.2rem !important; margin-bottom: 1.5rem; line-height: 1.2; }
+            footer { height: 110px; flex-shrink: 0; padding-bottom: 75px; z-index: 80; background: #000; }
             .history-split { flex-direction: column; overflow-y: auto; }
-            .history-player-panel { width: 100%; height: auto; padding: 1rem; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
-            
-            /* 强制控制栏显示在手机最底端 */
-            footer { height: 100px; flex-shrink: 0; padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid rgba(255,255,255,0.1); background: #000; }
-            .px-10, .md\:px-24 { padding-left: 1.2rem !important; padding-right: 1.2rem !important; }
+            .history-player-panel { width: 100%; height: auto; padding: 1.5rem; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
         }
     </style>
 </head>
@@ -64,16 +58,16 @@
 
     <aside class="sidebar-dark no-scrollbar text-left">
         <div class="p-6 sidebar-logo"><img src="GXlogo.png" alt="LOGO" class="w-full object-contain"></div>
-        <nav class="sidebar-nav space-y-1 p-2 md:p-6 flex-1">
+        <nav class="sidebar-nav space-y-1 p-6 flex-1">
             <button onclick="showPage('home')" id="nav-home" class="nav-link w-full flex items-center gap-3 px-4 py-3 text-sm rounded-lg active"><i data-lucide="home" class="w-4 h-4"></i><span>预习曲目</span></button>
             <button onclick="showPage('history')" id="nav-history" class="nav-link w-full flex items-center gap-3 px-4 py-3 text-sm rounded-lg"><i data-lucide="history" class="w-4 h-4"></i><span>历史曲库</span></button>
             <button onclick="showPage('donate')" id="nav-donate" class="nav-link w-full flex items-center gap-3 px-4 py-3 text-sm rounded-lg"><i data-lucide="heart-handshake" class="w-4 h-4"></i><span>甘心奉献</span></button>
-            <div class="pt-6 pb-2 px-4 text-[10px] text-zinc-500 font-bold uppercase tracking-widest sidebar-tag">事工安排</div>
-            <button class="nav-link w-full flex items-center gap-3 px-4 py-3 text-sm rounded-lg sidebar-tag"><i data-lucide="calendar" class="w-4 h-4"></i><span>近期活动</span></button>
-            <button class="nav-link w-full flex items-center gap-3 px-4 py-3 text-sm rounded-lg sidebar-tag"><i data-lucide="users-round" class="w-4 h-4"></i><span>门训事工</span></button>
-            <button class="nav-link w-full flex items-center gap-3 px-4 py-3 text-sm rounded-lg sidebar-tag"><i data-lucide="calendar" class="w-4 h-4"></i><span>代祷事项</span></button>
+            <div class="pt-6 pb-2 px-4 text-[10px] text-zinc-500 font-bold uppercase tracking-widest">事工安排</div>
+            <button class="nav-link w-full flex items-center gap-3 px-4 py-3 text-sm rounded-lg"><i data-lucide="calendar" class="w-4 h-4"></i><span>近期活动</span></button>
+            <button class="nav-link w-full flex items-center gap-3 px-4 py-3 text-sm rounded-lg"><i data-lucide="users-round" class="w-4 h-4"></i><span>门训事工</span></button>
+            <button class="nav-link w-full flex items-center gap-3 px-4 py-3 text-sm rounded-lg"><i data-lucide="calendar" class="w-4 h-4"></i><span>代祷事项</span></button>
         </nav>
-        <div class="mt-auto p-6 border-t border-white/5 admin-entry-pc hidden md:block">
+        <div class="mt-auto p-6 border-t border-white/5 admin-entry-pc">
             <button onclick="openAdminModal()" class="w-full flex justify-between items-center text-zinc-500 hover:text-orange-500 transition-colors">
                 <div class="flex items-center gap-3"><i data-lucide="settings" class="w-4 h-4"></i><span class="text-sm">曲目编辑</span></div>
                 <i data-lucide="lock" class="w-3 h-3 opacity-50"></i>
@@ -81,43 +75,74 @@
         </div>
     </aside>
 
+    <nav class="bottom-nav">
+        <button onclick="showPage('home')" id="bnav-home" class="flex flex-col items-center gap-1 active text-zinc-400 [&.active]:text-orange-500">
+            <i data-lucide="home" class="w-5 h-5"></i><span class="text-[10px]">预习</span>
+        </button>
+        <button onclick="showPage('history')" id="bnav-history" class="flex flex-col items-center gap-1 text-zinc-400 [&.active]:text-orange-500">
+            <i data-lucide="history" class="w-5 h-5"></i><span class="text-[10px]">曲库</span>
+        </button>
+        <button onclick="showPage('donate')" id="bnav-donate" class="flex flex-col items-center gap-1 text-zinc-400 [&.active]:text-orange-500">
+            <i data-lucide="heart-handshake" class="w-5 h-5"></i><span class="text-[10px]">奉献</span>
+        </button>
+        <button onclick="toggleMobileMoreMenu()" class="flex flex-col items-center gap-1 text-zinc-400">
+            <i data-lucide="menu" class="w-5 h-5"></i><span class="text-[10px]">更多</span>
+        </button>
+    </nav>
+
+    <div id="mobile-more-menu" class="fixed bottom-0 left-0 w-full z-[110] p-6 pb-28 shadow-2xl">
+        <div class="w-12 h-1.5 bg-zinc-800 rounded-full mx-auto mb-8"></div>
+        <div class="grid grid-cols-2 gap-4">
+            <button class="flex items-center gap-3 p-5 bg-zinc-900 rounded-2xl text-sm border border-white/5 active:bg-zinc-800 text-left">
+                <i data-lucide="calendar" class="text-orange-500 w-5 h-5"></i>近期活动
+            </button>
+            <button class="flex items-center gap-3 p-5 bg-zinc-900 rounded-2xl text-sm border border-white/5 active:bg-zinc-800 text-left">
+                <i data-lucide="users-round" class="text-orange-500 w-5 h-5"></i>门训事工
+            </button>
+            <button class="flex items-center gap-3 p-5 bg-zinc-900 rounded-2xl text-sm border border-white/5 active:bg-zinc-800 text-left col-span-2">
+                <i data-lucide="calendar-days" class="text-orange-500 w-5 h-5"></i>代祷事项
+            </button>
+        </div>
+        <button onclick="toggleMobileMoreMenu()" class="w-full mt-8 py-3 text-zinc-600 text-xs tracking-widest uppercase">点击收起</button>
+    </div>
+
     <main class="main-content">
         <div id="page-home" class="absolute inset-0 transition-opacity duration-700 block overflow-y-auto no-scrollbar">
             <div class="fixed inset-0 bg-[url('https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center"></div>
             <div class="fixed inset-0 vignette"></div>
-            <div class="relative min-h-full flex flex-col justify-center px-10 md:px-24 py-20 md:py-32 text-left">
+            <div class="relative min-h-full flex flex-col justify-center px-8 md:px-24 py-20 md:py-32 text-left">
                 <h4 class="text-orange-500 font-bold tracking-[0.4em] text-[10px] md:text-sm mb-4">WEEKLY PRACTICE</h4>
                 <h2 id="display-title" class="text-3xl md:text-8xl font-black mb-8 md:mb-10 tracking-tighter text-white">等待开启...</h2>
                 <div class="w-fit">
                     <div class="flex items-center gap-3 md:gap-6 mb-12 md:mb-16">
-                        <button onclick="startWeeklyPlay()" class="flex items-center gap-3 px-6 py-4 md:px-12 md:py-5 bg-orange-600 hover:bg-orange-700 rounded-full transition-all shadow-2xl flex-shrink-0 text-white"><i data-lucide="play-circle" class="w-5 h-5 md:w-6 md:h-6"></i><span class="text-sm md:text-lg font-bold uppercase">立即播放</span></button>
-                        <button onclick="showCurrentSheet()" class="flex items-center gap-2 px-6 py-4 md:px-8 md:py-5 bg-white/10 hover:bg-white/20 border border-white/10 rounded-full backdrop-blur-xl transition-all flex-shrink-0 text-white"><i data-lucide="file-text" class="w-4 h-4 md:w-5 md:h-5 text-orange-500"></i><span class="text-sm md:text-lg font-bold uppercase">查看简谱</span></button>
+                        <button onclick="startWeeklyPlay()" class="flex items-center gap-3 px-6 py-4 md:px-12 md:py-5 bg-orange-600 hover:bg-orange-700 rounded-full shadow-2xl flex-shrink-0 text-white"><i data-lucide="play-circle" class="w-5 h-5 md:w-6 md:h-6"></i><span class="text-sm md:text-lg font-bold uppercase">立即播放</span></button>
+                        <button onclick="showCurrentSheet()" class="flex items-center gap-3 px-6 py-4 md:px-8 md:py-5 bg-white/10 hover:bg-white/20 border border-white/10 rounded-full backdrop-blur-xl transition-all flex-shrink-0 text-white"><i data-lucide="file-text" class="w-4 h-4 md:w-5 md:h-5 text-orange-500"></i><span class="text-sm md:text-lg font-bold uppercase">查看简谱</span></button>
                     </div>
-                    <div class="w-full text-left">
-                        <div class="flex items-center gap-3 mb-6"><span class="h-px w-6 md:w-8 bg-orange-500"></span><h5 class="text-zinc-200 text-[10px] md:text-xs font-bold tracking-widest uppercase">本周待练清单</h5></div>
+                    <div class="w-full">
+                        <div class="flex items-center gap-3 mb-6"><span class="h-px w-8 bg-orange-500"></span><h5 class="text-zinc-200 text-xs font-bold tracking-widest uppercase">本周待练清单</h5></div>
                         <div id="home-weekly-tracks" class="space-y-3"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="page-history" class="absolute inset-0 bg-[#050505] z-30 translate-y-full transition-transform duration-700 overflow-hidden">
+        <div id="page-history" class="absolute inset-0 bg-[#050505] z-30 translate-y-full transition-transform duration-700 overflow-hidden text-left">
             <div class="history-split h-full">
-                <div class="history-player-panel bg-zinc-950/50 text-left">
+                <div class="history-player-panel">
                     <h4 class="text-orange-500 font-bold tracking-widest text-[10px] mb-4 uppercase">Now Selecting</h4>
                     <div class="space-y-2 mb-6">
-                        <h2 id="hist-playing-title" class="text-2xl md:text-4xl font-black leading-tight text-white">未在点播</h2>
+                        <h2 id="hist-playing-title" class="text-2xl md:text-4xl font-black text-white">未在点播</h2>
                         <p id="hist-playing-artist" class="text-zinc-500 text-sm italic">选择下方歌曲开始敬拜</p>
                     </div>
-                    <button onclick="showCurrentSheet()" class="w-full py-6 md:py-20 border border-dashed border-zinc-800 rounded-2xl group hover:border-orange-500/50 hover:bg-orange-500/5 transition-all text-white">
-                        <i data-lucide="file-text" class="w-8 h-8 md:w-12 md:h-12 text-zinc-700 group-hover:text-orange-500 mx-auto mb-2"></i>
-                        <span class="block text-xs text-zinc-500 group-hover:text-white font-bold">查看当前简谱</span>
+                    <button onclick="showCurrentSheet()" class="w-full py-8 md:py-20 border border-dashed border-zinc-800 rounded-2xl group text-white">
+                        <i data-lucide="file-text" class="w-10 h-10 text-zinc-700 group-hover:text-orange-500 mx-auto mb-2"></i>
+                        <span class="block text-xs text-zinc-500 font-bold">查看当前简谱</span>
                     </button>
                 </div>
-                <div class="history-list-panel no-scrollbar text-left">
+                <div class="history-list-panel no-scrollbar">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
-                        <h2 class="text-3xl md:text-5xl font-black italic tracking-tighter text-white">历史曲库</h2>
-                        <input type="text" id="history-search" oninput="renderHistory()" placeholder="搜索..." class="bg-zinc-900 border border-white/5 rounded-full py-2 md:py-3 px-6 text-sm w-full md:w-64 outline-none focus:border-orange-500 text-white">
+                        <h2 class="text-4xl md:text-5xl font-black italic tracking-tighter text-white">历史曲库</h2>
+                        <input type="text" id="history-search" oninput="renderHistory()" placeholder="搜索..." class="bg-zinc-900 border border-white/5 rounded-full py-3 px-6 text-sm w-full md:w-64 outline-none focus:border-orange-500 text-white">
                     </div>
                     <div id="history-sections" class="space-y-16"></div>
                 </div>
@@ -130,27 +155,27 @@
                     <img id="donate-img" src="giving.png" onerror="this.src='https://images.unsplash.com/photo-1515162305285-0293e4767cc2?q=80&w=2070'" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                 </div>
-                <div class="space-y-8">
+                <div class="space-y-10">
                     <h3 id="donate-tag" class="fade-up text-orange-500 font-bold tracking-[0.3em] text-[10px] md:text-xs italic uppercase">甘心奉献 · 神所喜悦</h3>
-                    <p id="donate-verse-1" class="fade-up delay-1 text-lg md:text-3xl leading-relaxed font-light italic">“少种的少收，多种的多收”，这话是真的。各人要随本心所酌定的，不要作难，不要勉强，因为捐得乐意的人是　神所喜爱的。</p>
-                    <div id="donate-verse-2" class="fade-up delay-2 space-y-4 md:space-y-6">
-                        <p class="text-sm md:text-xl text-zinc-400">神能将各样的恩惠多多地加给你们，使你们凡事常常充足，能多行各样善事。</p>
-                        <p class="text-orange-500/60 font-mono text-[10px] md:text-xs uppercase tracking-[0.5em]">哥林多后书 9:6-8</p>
+                    <p id="donate-verse-1" class="fade-up delay-1 text-xl md:text-3xl leading-relaxed font-light italic">“少种的少收，多种的多收”，这话是真的。各人要随本心所酌定的，不要作难，不要勉强，因为捐得乐意的人是　神所喜爱的。</p>
+                    <div id="donate-verse-2" class="fade-up delay-2 space-y-6">
+                        <p class="text-lg md:text-xl text-zinc-400">神能将各样的恩惠多多地加给你们，使你们凡事常常充足，能多行各样善事。</p>
+                        <p class="text-orange-500/60 font-mono text-xs uppercase tracking-[0.5em]">哥林多后书 9:6-8</p>
                     </div>
                     <div id="donate-footer" class="fade-up delay-3 pt-4">
-                        <button onclick="showPage('home')" class="px-10 py-3 md:px-10 md:py-4 bg-zinc-900 border border-white/10 rounded-full text-xs hover:bg-white hover:text-black transition-all uppercase tracking-widest text-white">返回首页</button>
+                        <button onclick="showPage('home')" class="px-10 py-4 bg-zinc-900 border border-white/10 rounded-full text-xs hover:bg-white hover:text-black transition-all uppercase tracking-widest text-white">返回首页</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <div id="page-admin" class="absolute inset-0 bg-zinc-950 z-40 translate-x-full transition-transform duration-500 p-6 md:p-16 overflow-y-auto no-scrollbar">
-            <div class="flex justify-between items-center mb-8 md:mb-12">
-                <h2 class="text-xl md:text-2xl font-bold italic text-white text-left">资源管理中心</h2>
-                <button onclick="showPage('home')" class="px-5 py-2 bg-zinc-800 rounded-full text-[10px] md:text-xs text-white">返回首页</button>
+            <div class="flex justify-between items-center mb-12">
+                <h2 class="text-2xl font-bold italic text-white text-left">资源管理中心</h2>
+                <button onclick="showPage('home')" class="px-6 py-2 bg-zinc-800 rounded-full text-xs text-white">返回首页</button>
             </div>
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
-                <div class="admin-panel p-6 md:p-8 bg-black">
+                <div class="admin-panel p-8 bg-black">
                     <h3 id="admin-form-title" class="text-lg font-bold mb-6 text-orange-500 text-left">入库新曲目</h3>
                     <div class="space-y-4">
                         <input id="input-title" type="text" placeholder="歌曲名" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-sm text-white outline-none">
@@ -163,20 +188,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="admin-panel p-6 md:p-8 lg:col-span-2">
-                    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-                        <h3 class="text-lg font-bold text-zinc-400 italic text-left w-full">总库清单 (点击设置本周)</h3>
-                        <div class="relative w-full md:w-64">
-                            <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500"></i>
-                            <input type="text" id="admin-search" oninput="renderAdminInventory()" placeholder="搜索..." class="w-full bg-zinc-900 border border-white/5 rounded-full py-2 pl-12 pr-6 text-xs text-white outline-none focus:border-orange-500 transition-all">
-                        </div>
-                    </div>
-                    <div id="admin-inventory-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[400px] md:max-h-[500px] overflow-y-auto pr-2 no-scrollbar text-white"></div>
+                <div class="admin-panel p-8 lg:col-span-2">
+                    <div id="admin-inventory-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto pr-2 no-scrollbar text-white"></div>
                 </div>
             </div>
         </div>
 
-        <footer class="mt-auto h-24 md:h-28 bg-black/95 backdrop-blur-3xl border-t border-white/5 flex flex-col justify-center px-4 md:px-10 z-[60]">
+        <footer class="mt-auto h-24 md:h-28 bg-black/95 border-t border-white/5 flex flex-col justify-center px-4 md:px-10 z-[60]">
             <div class="w-full flex items-center gap-3 md:gap-4 mb-2">
                 <span id="curr-time" class="text-[9px] md:text-[10px] text-zinc-500 font-mono">00:00</span>
                 <input id="progress-bar" type="range" class="flex-1" min="0" max="100" value="0">
@@ -185,9 +203,9 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4 w-1/4"><div class="truncate text-xs md:text-sm font-bold text-white text-left" id="play-bar-title">未在播放</div></div>
                 <div class="flex items-center gap-4 md:gap-6">
-                    <button onclick="toggleShuffle()" id="shuffle-btn" class="text-zinc-600 transition-colors" title="随机"><i data-lucide="shuffle" class="w-4 h-4"></i></button>
-                    <button onclick="prevSong()" class="text-white hover:text-orange-500" title="回溯"><i data-lucide="skip-back" class="w-5 h-5"></i></button>
-                    <button id="main-play-btn" onclick="togglePlay()" class="w-10 h-10 md:w-12 md:h-12 bg-white text-black rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110"><i data-lucide="play" class="w-5 h-5 md:w-6 md:h-6"></i></button>
+                    <button onclick="toggleShuffle()" id="shuffle-btn" class="text-zinc-600 transition-colors"><i data-lucide="shuffle" class="w-4 h-4"></i></button>
+                    <button onclick="prevSong()" class="text-white hover:text-orange-500"><i data-lucide="skip-back" class="w-4 h-4"></i></button>
+                    <button id="main-play-btn" onclick="togglePlay()" class="w-10 h-10 md:w-12 md:h-12 bg-white text-black rounded-full flex items-center justify-center shadow-lg"><i data-lucide="play" class="w-5 h-5 md:w-6 md:h-6"></i></button>
                     <button onclick="nextSong()" class="text-white hover:text-orange-500"><i data-lucide="skip-forward" class="w-5 h-5"></i></button>
                 </div>
                 <div class="w-1/4 flex justify-end"><input type="range" id="volume-control" class="w-20 hidden md:block" min="0" max="1" step="0.1" value="0.8"></div>
@@ -195,11 +213,11 @@
         </footer>
     </main>
 
-    <div id="admin-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center bg-black/95 text-white p-6">
+    <div id="admin-modal" class="fixed inset-0 z-[120] hidden flex items-center justify-center bg-black/95 text-white p-6">
         <div class="w-full max-w-xs bg-zinc-900 p-8 rounded-3xl border border-white/10 text-center shadow-2xl">
             <i data-lucide="lock" class="w-10 h-10 text-orange-500 mx-auto mb-4"></i>
             <h3 class="text-xl font-bold mb-6">安全验证</h3>
-            <input id="admin-password" type="password" placeholder="输入密码" class="w-full bg-black border border-zinc-800 rounded-xl p-4 mb-6 text-center text-white outline-none">
+            <input id="admin-password" type="password" placeholder="请输入密码" class="w-full bg-black border border-zinc-800 rounded-xl p-4 mb-6 text-center text-white outline-none">
             <div class="flex gap-3">
                 <button onclick="closeAdminModal()" class="flex-1 py-3 bg-zinc-800 rounded-xl font-bold text-zinc-400">返回</button>
                 <button onclick="checkPassword()" class="flex-1 py-3 bg-orange-600 rounded-xl font-bold">进入</button>
@@ -207,13 +225,13 @@
         </div>
     </div>
 
-    <div id="sheet-modal" class="fixed inset-0 z-[200] hidden flex flex-col items-center justify-center bg-black/90 p-4 md:p-10 text-white">
-        <button onclick="closeSheetModal()" class="absolute top-6 right-6 text-white/50 hover:text-white"><i data-lucide="x-circle" class="w-8 h-8"></i></button>
+    <div id="sheet-modal" class="fixed inset-0 z-[200] hidden flex flex-col items-center justify-center bg-black/90 p-4 text-white">
+        <button onclick="closeSheetModal()" class="absolute top-10 right-10 text-white/50 hover:text-white"><i data-lucide="x-circle" class="w-10 h-10"></i></button>
         <div class="w-full h-full flex items-center justify-center"><img id="modal-sheet-img" src="" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl"></div>
     </div>
 
     <script>
-        // --- 核心固化数据库保持（62 首） ---
+        // --- 固化数据库保持（62 首） ---
         let allSongs = JSON.parse(localStorage.getItem('worshipLibrary')) || [
             {"id": 1, "title": "耶稣 耶稣 （赞美之泉）", "artist": "赞美之泉", "date": "2026-02", "sheet": "https://11.400400.icu:9003/api/download/image?id=132599&timestamp=509538429&code=4470", "audio": "https://11.400400.icu:9003/api/download/music?id=86892&timestamp=509538437&code=4df6"},
             {"id": 2, "title": "满有能力", "artist": "赞美之泉", "date": "2026-02", "sheet": "https://11.400400.icu:9003/api/download/image?id=29493&timestamp=509537613&code=87ca", "audio": "https://11.400400.icu:9003/api/download/music?id=12811&timestamp=509537923&code=379d"},
@@ -286,7 +304,7 @@
         function save() { localStorage.setItem('worshipLibrary', JSON.stringify(allSongs)); localStorage.setItem('weeklyIds', JSON.stringify(weeklyIds)); }
         function renderAll() { renderHistory(); renderAdminInventory(); renderHomeSetlist(); if (typeof lucide !== 'undefined') lucide.createIcons(); }
 
-        // --- 核心播放控制 ---
+        // --- 播放逻辑 ---
         function playSongById(id, recordHistory = true) {
             const song = allSongs.find(s => s.id === id); if(!song) return;
             if (recordHistory && currentSongId !== null && currentSongId !== id) playbackHistory.push(currentSongId);
@@ -304,29 +322,39 @@
         }
         function prevSong() { if (playbackHistory.length > 0) playSongById(playbackHistory.pop(), false); else { const hIdx = allSongs.findIndex(s => s.id === currentSongId); playSongById(allSongs[(hIdx - 1 + allSongs.length) % allSongs.length].id, false); } }
 
-        // --- 页面路由 ---
+        // --- 页面路由与菜单逻辑 ---
+        function toggleMobileMoreMenu() { document.getElementById('mobile-more-menu').classList.toggle('open'); }
+
         function showPage(p) {
             const pHist = document.getElementById('page-history'), pAdm = document.getElementById('page-admin'), pDon = document.getElementById('page-donate');
             if (pHist) pHist.classList.add('translate-y-full'); if (pAdm) pAdm.classList.add('translate-x-full'); if (pDon) pDon.classList.add('translate-y-full');
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.bottom-nav button').forEach(l => l.classList.remove('active', 'text-orange-500'));
 
             const donateImg = document.getElementById('donate-img');
             const items = ['donate-tag', 'donate-verse-1', 'donate-verse-2', 'donate-footer'];
-            if (donateImg) {
-                donateImg.classList.remove('animate-bloom');
-                items.forEach(id => { const el = document.getElementById(id); if (el) { el.style.animation = 'none'; el.offsetHeight; el.classList.remove('do-fade-up'); } });
-            }
+            if (donateImg) { donateImg.classList.remove('animate-bloom'); items.forEach(id => { const el = document.getElementById(id); if (el) { el.style.animation = 'none'; el.offsetHeight; el.classList.remove('do-fade-up'); } }); }
 
-            if(p === 'history') { if (pHist) pHist.classList.remove('translate-y-full'); document.getElementById('nav-history')?.classList.add('active'); renderHistory(); }
+            if(p === 'history') { 
+                if (pHist) pHist.classList.remove('translate-y-full'); 
+                document.getElementById('nav-history')?.classList.add('active'); 
+                document.getElementById('bnav-history')?.classList.add('active', 'text-orange-500'); 
+                renderHistory(); 
+            }
             else if(p === 'admin') { if (pAdm) pAdm.classList.remove('translate-x-full'); renderAdminInventory(); }
             else if(p === 'donate') {
-                if (pDon) pDon.classList.remove('translate-y-full'); document.getElementById('nav-donate')?.classList.add('active');
+                if (pDon) pDon.classList.remove('translate-y-full'); document.getElementById('nav-donate')?.classList.add('active'); document.getElementById('bnav-donate')?.classList.add('active', 'text-orange-500');
                 if (donateImg) { setTimeout(() => { donateImg.classList.add('animate-bloom'); items.forEach(id => { const el = document.getElementById(id); if (el) { el.style.animation = ''; el.classList.add('do-fade-up'); } }); }, 300); }
-            } else { document.getElementById('nav-home')?.classList.add('active'); }
+            } else { 
+                document.getElementById('nav-home')?.classList.add('active'); 
+                document.getElementById('bnav-home')?.classList.add('active', 'text-orange-500'); 
+            }
+            
+            document.getElementById('mobile-more-menu').classList.remove('open');
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
-        // --- 渲染逻辑 ---
+        // --- 其余渲染与管理代码保持不变 ---
         function renderHomeSetlist() {
             const container = document.getElementById('home-weekly-tracks'); if (!container) return;
             container.innerHTML = weeklyIds.map((id, index) => {
@@ -336,7 +364,6 @@
             }).join('');
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
-
         function renderHistory() {
             const container = document.getElementById('history-sections'), groups = {}, q = document.getElementById('history-search')?.value.toLowerCase() || ""; 
             const filtered = allSongs.filter(s => s.title.toLowerCase().includes(q) || s.artist.toLowerCase().includes(q));
@@ -349,7 +376,6 @@
                 }).join('')}</div></div>`).join('');
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
-
         function renderAdminInventory() {
             const list = document.getElementById('admin-inventory-list'), q = document.getElementById('admin-search')?.value.toLowerCase() || "";
             const filtered = allSongs.filter(s => s.title.toLowerCase().includes(q) || s.artist.toLowerCase().includes(q));
@@ -359,7 +385,6 @@
             }).join('');
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
-
         function prepareEdit(id) {
             const song = allSongs.find(s => s.id === id); if (!song) return;
             editingId = id; document.getElementById('input-title').value = song.title; document.getElementById('input-artist').value = song.artist; document.getElementById('input-sheet').value = song.sheet; document.getElementById('input-audio').value = song.audio;
