@@ -3,70 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NewSong Worship V8.4 - 伙伴同步版</title>
+    <title>NewSong Worship V8.5 - 移动端适配最终版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;600;900&display=swap');
         body { font-family: 'Noto Serif SC', serif; background-color: #050505; color: #fff; overflow: hidden; height: 100vh; width: 100vw; }
+        
+        /* 布局基础 */
         .sidebar-dark { background-color: #000; border-right: 1px solid #1a1a1a; width: 208px; flex-shrink: 0; display: flex; flex-direction: column; z-index: 50; }
         .main-content { flex: 1; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+        
+        /* 导航样式 */
         .nav-link { color: #d1d5db; transition: all 0.3s ease; cursor: pointer; text-align: left; }
         .nav-link:hover { color: #ffffff; transform: translateX(4px); }
         .nav-link.active { color: #f97316; font-weight: 600; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* 核心动画 */
         .vignette { background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.7) 100%); }
-        @keyframes imageBloom { 0% { filter: grayscale(0.5) brightness(0.6); transform: scale(1.08); } 100% { filter: grayscale(0) brightness(1); transform: scale(1); } }
-        .animate-bloom { animation: imageBloom 4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         @keyframes textFadeUp { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
         .fade-up { opacity: 0; }
         .do-fade-up { animation: textFadeUp 1.5s ease-out forwards; }
         .delay-1 { animation-delay: 0.5s; }
         .delay-2 { animation-delay: 1.5s; }
         .delay-3 { animation-delay: 2.5s; }
-        .history-split { display: flex; height: 100%; overflow: hidden; }
-        .history-player-panel { width: 350px; border-right: 1px solid rgba(255,255,255,0.05); padding: 2rem; display: flex; flex-direction: column; justify-content: center; }
-        .history-list-panel { flex: 1; overflow-y: auto; padding: 2rem; padding-bottom: 120px; }
-        .weekly-track-item { background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); transition: all 0.3s ease; }
-        input[type="range"] { -webkit-appearance: none; background: rgba(255,255,255,0.1); border-radius: 5px; height: 4px; cursor: pointer; background-image: linear-gradient(#f97316, #f97316); background-repeat: no-repeat; }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 14px; background: #f97316; border-radius: 50%; border: 2px solid #fff; }
-        .admin-panel { background: #0a0a0a; border-radius: 20px; border: 1px solid #262626; }
 
+        /* 历史库布局：响应式分栏 */
+        .history-split { display: flex; height: 100%; width: 100%; overflow: hidden; }
+        .history-player-panel { width: 350px; border-right: 1px solid rgba(255,255,255,0.05); padding: 2rem; display: flex; flex-direction: column; justify-content: center; }
+        .history-list-panel { flex: 1; overflow-y: auto; padding: 2rem; padding-bottom: 150px; }
+
+        .weekly-track-item { background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
+
+        /* 移动端覆盖样式 */
         @media (max-width: 768px) {
             body { flex-direction: column; }
-            .sidebar-dark { width: 100%; height: auto; border-right: none; border-bottom: 1px solid #1a1a1a; flex-direction: row; overflow-x: auto; padding: 10px; }
+            .sidebar-dark { width: 100%; height: auto; border-right: none; border-bottom: 1px solid #1a1a1a; flex-direction: row; overflow-x: auto; padding: 5px 10px; }
             .sidebar-logo, .sidebar-tag, .admin-entry-pc { display: none !important; }
-            .sidebar-nav { display: flex; flex-direction: row; gap: 10px; white-space: nowrap; width: auto; padding: 0 10px; }
-            .nav-link { flex-shrink: 0; padding: 8px 15px !important; font-size: 13px; display: flex; align-items: center; gap: 6px; }
-            .main-content { height: calc(100vh - 60px); }
-            #display-title { font-size: 3rem !important; }
+            .sidebar-nav { display: flex; flex-direction: row; gap: 5px; white-space: nowrap; width: auto; padding: 5px 0; }
+            .nav-link { flex-shrink: 0; padding: 6px 12px !important; font-size: 13px; border-radius: 20px; }
+            
+            /* 歌名自适应 */
+            #display-title { font-size: 2.8rem !important; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; margin-bottom: 1.5rem; }
+            
+            /* 历史库手机端重构：不再分栏 */
             .history-split { flex-direction: column; overflow-y: auto; }
-            .history-player-panel { width: 100%; height: auto; padding: 1.5rem; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
-            footer { height: 110px; padding-bottom: 10px; }
+            .history-player-panel { width: 100%; height: auto; padding: 1rem; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); background: #000; }
+            .history-player-panel h2 { font-size: 1.5rem !important; }
+            .history-player-panel button { padding: 1.5rem !important; border-radius: 15px; }
+            .history-list-panel { padding: 1rem; overflow-y: visible; height: auto; }
+
+            /* 播放条放大 */
+            footer { height: 120px; padding: 0 1rem 1.5rem 1rem; }
+            #main-play-btn { width: 3.5rem !important; height: 3.5rem !important; }
+            #main-play-btn i { width: 1.8rem; height: 1.8rem; }
+            .w-1\/4 { width: 35% !important; }
         }
     </style>
 </head>
 <body class="flex h-screen w-full overflow-hidden">
 
-    <aside class="sidebar-dark no-scrollbar text-left">
+    <aside class="sidebar-dark no-scrollbar">
         <div class="p-6 sidebar-logo"><img src="GXlogo.png" alt="LOGO" class="w-full object-contain"></div>
-        <nav class="sidebar-nav space-y-1 p-2 md:p-6 flex-1">
+        <nav class="sidebar-nav space-y-1 p-2 md:p-6 flex-1 text-left">
             <button onclick="showPage('home')" id="nav-home" class="nav-link w-full flex items-center gap-3 px-4 py-3 text-sm rounded-lg active"><i data-lucide="home" class="w-4 h-4"></i><span>预习曲目</span></button>
             <button onclick="showPage('history')" id="nav-history" class="nav-link w-full flex items-center gap-3 px-4 py-3 text-sm rounded-lg"><i data-lucide="history" class="w-4 h-4"></i><span>历史曲库</span></button>
             <button onclick="showPage('donate')" id="nav-donate" class="nav-link w-full flex items-center gap-3 px-4 py-3 text-sm rounded-lg"><i data-lucide="heart-handshake" class="w-4 h-4"></i><span>甘心奉献</span></button>
-            
             <div class="pt-6 pb-2 px-4 text-[10px] text-zinc-500 font-bold uppercase tracking-widest sidebar-tag">事工安排</div>
-            <button class="nav-link w-full flex items-center gap-3 px-4 py-3 text-sm rounded-lg"><i data-lucide="calendar" class="w-4 h-4"></i><span>近期活动</span></button>
-            <button class="nav-link w-full flex items-center gap-3 px-4 py-3 text-sm rounded-lg"><i data-lucide="users-round" class="w-4 h-4"></i><span>门训事工</span></button>
-            <button class="nav-link w-full flex items-center gap-3 px-4 py-3 text-sm rounded-lg"><i data-lucide="calendar" class="w-4 h-4"></i><span>代祷事项</span></button>
+            <button class="nav-link w-full flex items-center gap-3 px-4 py-3 text-sm rounded-lg sidebar-tag"><i data-lucide="calendar" class="w-4 h-4"></i><span>近期活动</span></button>
+            <button class="nav-link w-full flex items-center gap-3 px-4 py-3 text-sm rounded-lg sidebar-tag"><i data-lucide="users-round" class="w-4 h-4"></i><span>门训事工</span></button>
+            <button class="nav-link w-full flex items-center gap-3 px-4 py-3 text-sm rounded-lg sidebar-tag"><i data-lucide="calendar" class="w-4 h-4"></i><span>代祷事项</span></button>
         </nav>
-        
         <div class="mt-auto p-6 border-t border-white/5 admin-entry-pc hidden md:block">
-            <button onclick="openAdminModal()" class="w-full flex justify-between items-center text-zinc-500 hover:text-orange-500 transition-colors">
-                <div class="flex items-center gap-3"><i data-lucide="settings" class="w-4 h-4"></i><span class="text-sm">曲目编辑</span></div>
-                <i data-lucide="lock" class="w-3 h-3 opacity-50"></i>
-            </button>
+            <button onclick="openAdminModal()" class="w-full flex justify-between items-center text-zinc-500 hover:text-orange-500 transition-colors"><div class="flex items-center gap-3"><i data-lucide="settings" class="w-4 h-4"></i><span class="text-sm">曲目编辑</span></div><i data-lucide="lock" class="w-3 h-3 opacity-50"></i></button>
         </div>
     </aside>
 
@@ -74,13 +84,13 @@
         <div id="page-home" class="absolute inset-0 transition-opacity duration-700 block overflow-y-auto no-scrollbar">
             <div class="fixed inset-0 bg-[url('https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center"></div>
             <div class="fixed inset-0 vignette"></div>
-            <div class="relative min-h-full flex flex-col justify-center px-10 md:px-24 py-32 text-left">
+            <div class="relative min-h-full flex flex-col justify-center px-6 md:px-24 py-32 text-left">
                 <h4 class="text-orange-500 font-bold tracking-[0.4em] text-[10px] md:text-sm mb-4">WEEKLY PRACTICE</h4>
-                <h2 id="display-title" class="text-5xl md:text-8xl font-black mb-10 tracking-tighter text-white">等待开启...</h2>
-                <div class="w-fit">
-                    <div class="flex items-center gap-4 md:gap-6 mb-16">
-                        <button onclick="startWeeklyPlay()" class="flex items-center gap-4 px-8 py-4 md:px-12 md:py-5 bg-orange-600 hover:bg-orange-700 rounded-full transition-all shadow-2xl flex-shrink-0 text-white"><i data-lucide="play-circle" class="w-5 h-5 md:w-6 md:h-6"></i><span class="text-sm md:text-lg font-bold uppercase">立即播放</span></button>
-                        <button onclick="showCurrentSheet()" class="flex items-center gap-3 px-6 py-4 md:px-8 md:py-5 bg-white/10 hover:bg-white/20 border border-white/10 rounded-full backdrop-blur-xl transition-all flex-shrink-0 text-white"><i data-lucide="file-text" class="w-4 h-4 md:w-5 md:h-5 text-orange-500"></i><span class="text-sm md:text-lg font-bold uppercase">查看简谱</span></button>
+                <h2 id="display-title" class="text-white font-black tracking-tighter">等待开启...</h2>
+                <div class="w-full md:w-fit">
+                    <div class="flex items-center gap-3 md:gap-6 mb-12 md:mb-16">
+                        <button onclick="startWeeklyPlay()" class="flex items-center gap-3 px-8 py-4 md:px-12 md:py-5 bg-orange-600 hover:bg-orange-700 rounded-full transition-all shadow-2xl flex-shrink-0 text-white"><i data-lucide="play-circle" class="w-5 h-5 md:w-6 md:h-6"></i><span class="text-sm md:text-lg font-bold">立即播放</span></button>
+                        <button onclick="showCurrentSheet()" class="flex items-center gap-3 px-6 py-4 md:px-8 md:py-5 bg-white/10 hover:bg-white/20 border border-white/10 rounded-full backdrop-blur-xl transition-all flex-shrink-0 text-white"><i data-lucide="file-text" class="w-4 h-4 md:w-5 md:h-5 text-orange-500"></i><span class="text-sm md:text-lg font-bold">简谱</span></button>
                     </div>
                     <div class="w-full text-left">
                         <div class="flex items-center gap-3 mb-6"><span class="h-px w-8 bg-orange-500"></span><h5 class="text-zinc-200 text-xs font-bold tracking-widest uppercase">本周待练清单</h5></div>
@@ -90,23 +100,20 @@
             </div>
         </div>
 
-        <div id="page-history" class="absolute inset-0 bg-[#050505] z-30 translate-y-full transition-transform duration-700 overflow-hidden text-left">
+        <div id="page-history" class="absolute inset-0 bg-[#050505] z-30 translate-y-full transition-transform duration-700 overflow-y-auto no-scrollbar">
             <div class="history-split h-full">
                 <div class="history-player-panel bg-zinc-950/50">
                     <h4 class="text-orange-500 font-bold tracking-widest text-[10px] mb-4 uppercase">Now Selecting</h4>
-                    <div class="space-y-2 mb-6">
-                        <h2 id="hist-playing-title" class="text-3xl md:text-4xl font-black leading-tight text-white">未在点播</h2>
-                        <p id="hist-playing-artist" class="text-zinc-500 text-sm italic">选择下方歌曲开始敬拜</p>
-                    </div>
-                    <button onclick="showCurrentSheet()" class="w-full py-10 md:py-20 border border-dashed border-zinc-800 rounded-2xl group hover:border-orange-500/50 hover:bg-orange-500/5 transition-all text-white">
-                        <i data-lucide="file-text" class="w-10 h-10 text-zinc-700 group-hover:text-orange-500 mx-auto mb-2"></i>
-                        <span class="block text-xs text-zinc-500 group-hover:text-white font-bold">查看当前简谱</span>
+                    <h2 id="hist-playing-title" class="text-2xl md:text-4xl font-black text-white truncate mb-4">未在点播</h2>
+                    <button onclick="showCurrentSheet()" class="w-full py-6 md:py-20 border border-dashed border-zinc-800 rounded-2xl flex items-center justify-center gap-3 text-zinc-400">
+                        <i data-lucide="file-text" class="w-6 h-6 text-orange-500"></i>
+                        <span class="font-bold">点击查看当前简谱</span>
                     </button>
                 </div>
                 <div class="history-list-panel no-scrollbar text-left">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
-                        <h2 class="text-4xl md:text-5xl font-black italic tracking-tighter text-white">历史曲库</h2>
-                        <input type="text" id="history-search" oninput="renderHistory()" placeholder="搜索..." class="bg-zinc-900 border border-white/5 rounded-full py-3 px-6 text-sm w-full md:w-64 outline-none focus:border-orange-500 text-white">
+                        <h2 class="text-3xl md:text-5xl font-black italic tracking-tighter text-white">历史曲库</h2>
+                        <input type="text" id="history-search" oninput="renderHistory()" placeholder="搜索歌曲..." class="bg-zinc-900 border border-white/5 rounded-full py-2 md:py-3 px-6 text-sm w-full md:w-64 outline-none focus:border-orange-500 text-white">
                     </div>
                     <div id="history-sections" class="space-y-16"></div>
                 </div>
@@ -114,69 +121,28 @@
         </div>
 
         <div id="page-donate" class="absolute inset-0 bg-[#050505] z-30 translate-y-full transition-transform duration-700 overflow-y-auto flex flex-col items-center justify-center p-6 md:p-24 no-scrollbar">
-            <div class="max-w-3xl text-center space-y-12 text-white">
-                <div class="relative w-full h-64 md:h-80 overflow-hidden rounded-3xl shadow-2xl border border-white/5">
-                    <img id="donate-img" src="giving.png" onerror="this.src='https://images.unsplash.com/photo-1515162305285-0293e4767cc2?q=80&w=2070'" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-                </div>
-                <div class="space-y-10">
-                    <h3 id="donate-tag" class="fade-up text-orange-500 font-bold tracking-[0.3em] text-xs italic uppercase">甘心奉献 · 神所喜悦</h3>
-                    <p id="donate-verse-1" class="fade-up delay-1 text-xl md:text-3xl leading-relaxed font-light italic">“少种的少收，多种的多收”，这话是真的。各人要随本心所酌定的，不要作难，不要勉强，因为捐得乐意的人是　神所喜爱的。</p>
+            <div class="max-w-3xl text-center space-y-12">
+                <div class="relative w-full h-64 md:h-80 overflow-hidden rounded-3xl border border-white/5"><img id="donate-img" src="giving.png" onerror="this.src='https://images.unsplash.com/photo-1515162305285-0293e4767cc2?q=80&w=2070'" class="w-full h-full object-cover"></div>
+                <div class="space-y-8">
+                    <h3 id="donate-tag" class="fade-up text-orange-500 font-bold text-xs tracking-widest uppercase">甘心奉献 · 神所喜悦</h3>
+                    <p id="donate-verse-1" class="fade-up delay-1 text-xl md:text-3xl leading-relaxed font-light italic text-zinc-100">“少种的少收，多种的多收”，这话是真的。各人要随本心所酌定的，不要作难，不要勉强，因为捐得乐意的人是　神所喜爱的。</p>
                     <div id="donate-verse-2" class="fade-up delay-2 space-y-6">
                         <p class="text-lg md:text-xl text-zinc-400">神能将各样的恩惠多多地加给你们，使你们凡事常常充足，能多行各样善事。</p>
-                        <p class="text-orange-500/60 font-mono text-xs uppercase tracking-[0.5em]">哥林多后书 9:6-8</p>
+                        <p class="text-orange-500/60 font-mono text-xs tracking-widest">哥林多后书 9:6-8</p>
                     </div>
-                    <div id="donate-footer" class="fade-up delay-3 pt-4">
-                        <button onclick="showPage('home')" class="px-10 py-4 bg-zinc-900 border border-white/10 rounded-full text-xs hover:bg-white hover:text-black transition-all uppercase tracking-widest">返回首页</button>
-                    </div>
+                    <button onclick="showPage('home')" class="fade-up delay-3 px-10 py-4 bg-zinc-900 border border-white/10 rounded-full text-xs hover:bg-white hover:text-black transition-all text-white">返回首页</button>
                 </div>
             </div>
         </div>
 
-        <div id="page-admin" class="absolute inset-0 bg-zinc-950 z-40 translate-x-full transition-transform duration-500 p-6 md:p-16 overflow-y-auto no-scrollbar">
-            <div class="flex justify-between items-center mb-12">
-                <h2 class="text-2xl font-bold italic text-white text-left">资源管理中心</h2>
-                <button onclick="showPage('home')" class="px-6 py-2 bg-zinc-800 rounded-full text-xs text-white">返回首页</button>
-            </div>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
-                <div class="admin-panel p-8 bg-black">
-                    <h3 id="admin-form-title" class="text-lg font-bold mb-6 text-orange-500 text-left">入库新曲目</h3>
-                    <div class="space-y-4">
-                        <input id="input-title" type="text" placeholder="歌曲名" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-sm text-white outline-none">
-                        <input id="input-artist" type="text" placeholder="艺术家" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-sm text-white outline-none">
-                        <input id="input-sheet" type="text" placeholder="简谱链接" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-sm text-white outline-none">
-                        <input id="input-audio" type="text" placeholder="音频链接" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-sm text-white outline-none focus:border-orange-500">
-                        <div class="flex gap-2">
-                            <button id="save-btn" onclick="addNewSongToLibrary()" class="flex-1 py-4 bg-orange-600 rounded-lg font-bold text-white hover:bg-orange-500">确认保存</button>
-                            <button id="cancel-edit-btn" onclick="resetAdminForm()" class="hidden px-4 bg-zinc-800 rounded-lg text-zinc-400"><i data-lucide="x"></i></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="admin-panel p-8 lg:col-span-2">
-                    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 text-white">
-                        <h3 class="text-lg font-bold text-zinc-400 italic text-left w-full">总库清单</h3>
-                        <div class="relative w-full md:w-64">
-                            <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500"></i>
-                            <input type="text" id="admin-search" oninput="renderAdminInventory()" placeholder="搜索曲目..." class="w-full bg-zinc-900 border border-white/5 rounded-full py-2 pl-12 pr-6 text-xs text-white outline-none focus:border-orange-500">
-                        </div>
-                    </div>
-                    <div id="admin-inventory-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto pr-2 no-scrollbar text-left text-white"></div>
-                </div>
-            </div>
-        </div>
-
-        <footer class="mt-auto h-28 bg-black/95 backdrop-blur-3xl border-t border-white/5 flex flex-col justify-center px-6 md:px-10 z-[60]">
-            <div class="w-full flex items-center gap-4 mb-2">
-                <span id="curr-time" class="text-[10px] text-zinc-500 font-mono">00:00</span>
-                <input id="progress-bar" type="range" class="flex-1" min="0" max="100" value="0">
-                <span id="total-time" class="text-[10px] text-zinc-500 font-mono">00:00</span>
-            </div>
+        <footer class="mt-auto h-28 bg-black/95 backdrop-blur-3xl border-t border-white/5 flex flex-col justify-center px-4 md:px-10 z-[60]">
+            <div class="w-full flex items-center gap-4 mb-2"><span id="curr-time" class="text-[10px] text-zinc-500 font-mono">00:00</span><input id="progress-bar" type="range" class="flex-1" min="0" max="100" value="0"><span id="total-time" class="text-[10px] text-zinc-500 font-mono">00:00</span></div>
             <div class="flex items-center justify-between">
-                <div class="flex items-center gap-4 w-1/4"><div class="truncate text-sm font-bold text-white text-left" id="play-bar-title">未在播放</div></div>
+                <div class="flex items-center gap-4 w-1/4"><div class="truncate text-xs md:text-sm font-bold text-white text-left" id="play-bar-title">未在播放</div></div>
                 <div class="flex items-center gap-6">
-                    <button onclick="toggleShuffle()" id="shuffle-btn" class="text-zinc-600 transition-colors"><i data-lucide="shuffle" class="w-4 h-4"></i></button>
+                    <button onclick="toggleShuffle()" id="shuffle-btn" class="text-zinc-600 transition-colors"><i data-lucide="shuffle" class="w-5 h-5"></i></button>
                     <button onclick="prevSong()" class="text-white hover:text-orange-500"><i data-lucide="skip-back" class="w-5 h-5"></i></button>
-                    <button id="main-play-btn" onclick="togglePlay()" class="w-12 h-12 bg-white text-black rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110"><i data-lucide="play" class="w-6 h-6"></i></button>
+                    <button id="main-play-btn" onclick="togglePlay()" class="w-14 h-14 bg-white text-black rounded-full flex items-center justify-center shadow-2xl transition-transform hover:scale-110"><i data-lucide="play" class="w-7 h-7"></i></button>
                     <button onclick="nextSong()" class="text-white hover:text-orange-500"><i data-lucide="skip-forward" class="w-5 h-5"></i></button>
                 </div>
                 <div class="w-1/4 flex justify-end"><input type="range" id="volume-control" class="w-24 hidden md:block" min="0" max="1" step="0.1" value="0.8"></div>
@@ -189,21 +155,20 @@
             <i data-lucide="lock" class="w-10 h-10 text-orange-500 mx-auto mb-4"></i>
             <h3 class="text-xl font-bold mb-6">管理访问</h3>
             <input id="admin-password" type="password" placeholder="密码..." class="w-full bg-black border border-zinc-800 rounded-xl p-4 mb-6 text-center text-white outline-none">
-            <div class="flex gap-3">
-                <button onclick="closeAdminModal()" class="flex-1 py-3 bg-zinc-800 rounded-xl font-bold text-zinc-400">返回</button>
-                <button onclick="checkPassword()" class="flex-1 py-3 bg-orange-600 rounded-xl font-bold">进入</button>
-            </div>
+            <div class="flex gap-3"><button onclick="closeAdminModal()" class="flex-1 py-3 bg-zinc-800 rounded-xl font-bold text-zinc-400">返回</button><button onclick="checkPassword()" class="flex-1 py-3 bg-orange-600 rounded-xl font-bold">进入</button></div>
         </div>
     </div>
-
-    <div id="sheet-modal" class="fixed inset-0 z-[200] hidden flex flex-col items-center justify-center bg-black/90 p-6 text-white">
-        <button onclick="closeSheetModal()" class="absolute top-10 right-10 text-white/50 hover:text-white"><i data-lucide="x-circle" class="w-10 h-10"></i></button>
-        <div class="w-full h-full flex items-center justify-center"><img id="modal-sheet-img" src="" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl"></div>
+    <div id="sheet-modal" class="fixed inset-0 z-[200] hidden flex flex-col items-center justify-center bg-black/95 p-4 text-white">
+        <button onclick="closeSheetModal()" class="absolute top-6 right-6 text-white/50"><i data-lucide="x-circle" class="w-10 h-10"></i></button>
+        <img id="modal-sheet-img" src="" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl">
     </div>
 
     <script>
-        // --- 核心固化数据库：已新增 3 首曲目，共 62 首 ---
+        // --- 核心固化数据库：已包含所有 62 首曲目 ---
         let allSongs = JSON.parse(localStorage.getItem('worshipLibrary')) || [
+            {"id": 60, "title": "你坐着为王 F调", "artist": "生命灵粮堂", "date": "2026-02", "sheet": "https://11.400400.icu:9003/api/download/image?id=112734&timestamp=509562981&code=5e9f", "audio": "https://11.400400.icu:9003/api/download/music?id=70168&timestamp=509562984&code=677c"},
+            {"id": 61, "title": "奇异恩典（锁链断开）", "artist": "生命灵粮堂", "date": "2026-02", "sheet": "https://11.400400.icu:9003/api/download/image?id=113951&timestamp=509562914&code=a92e", "audio": "https://11.400400.icu:9003/api/download/music?id=71262&timestamp=509562917&code=add5"},
+            {"id": 62, "title": "将天敞开", "artist": "赞美之泉", "date": "2026-02", "sheet": "https://11.400400.icu:9003/api/download/image?id=29516&timestamp=509562805&code=5827", "audio": "https://11.400400.icu:9003/api/download/music?id=12834&timestamp=509562866&code=20ef"},
             {"id": 1, "title": "耶稣 耶稣 （赞美之泉）", "artist": "赞美之泉", "date": "2026-02", "sheet": "https://11.400400.icu:9003/api/download/image?id=132599&timestamp=509538429&code=4470", "audio": "https://11.400400.icu:9003/api/download/music?id=86892&timestamp=509538437&code=4df6"},
             {"id": 2, "title": "满有能力", "artist": "赞美之泉", "date": "2026-02", "sheet": "https://11.400400.icu:9003/api/download/image?id=29493&timestamp=509537613&code=87ca", "audio": "https://11.400400.icu:9003/api/download/music?id=12811&timestamp=509537923&code=379d"},
             {"id": 3, "title": "每一天我需要你", "artist": "赞美之泉", "date": "2026-02", "sheet": "https://r2-gxsongpic.831017.xyz/sheets/1756523372443_IMG_8321.jpeg", "audio": "https://23.400400.icu:9003/api/download/music?id=52047&timestamp=494247821&code=f3cd"},
@@ -262,10 +227,7 @@
             {"id": 56, "title": "你是我的一切", "artist": "赞美之泉", "date": "2026-02", "sheet": "https://34.400400.icu:9003/api/download/image?id=89762&timestamp=507638647&code=14e8", "audio": "https://34.400400.icu:9003/api/download/music?id=62942&timestamp=507638659&code=b61e"},
             {"id": 57, "title": "带我进入你的同在", "artist": "赞美之泉", "date": "2026-02", "sheet": "https://34.400400.icu:9003/api/download/image?id=114176&timestamp=507638566&code=6f55", "audio": "https://34.400400.icu:9003/api/download/music?id=71592&timestamp=507638578&code=c7d4"},
             {"id": 58, "title": "我要看见", "artist": "赞美之泉", "date": "2026-02", "sheet": "https://34.400400.icu:9003/api/download/image?id=86916&timestamp=507638834&code=f92d", "audio": "https://34.400400.icu:9003/api/download/music?id=51733&timestamp=507638838&code=0724"},
-            {"id": 59, "title": "十字架", "artist": "赞美之泉", "date": "2026-02", "sheet": "https://34.400400.icu:9003/api/download/image?id=119252&timestamp=507638788&code=4aaf", "audio": "https://34.400400.icu:9003/api/download/music?id=76115&timestamp=507638811&code=84c8"},
-            {"id": 60, "title": "你坐着为王 F调", "artist": "生命灵粮堂", "date": "2026-02", "sheet": "https://11.400400.icu:9003/api/download/image?id=112734&timestamp=509562981&code=5e9f", "audio": "https://11.400400.icu:9003/api/download/music?id=70168&timestamp=509562984&code=677c"},
-            {"id": 61, "title": "奇异恩典（锁链断开）", "artist": "生命灵粮堂", "date": "2026-02", "sheet": "https://11.400400.icu:9003/api/download/image?id=113951&timestamp=509562914&code=a92e", "audio": "https://11.400400.icu:9003/api/download/music?id=71262&timestamp=509562917&code=add5"},
-            {"id": 62, "title": "将天敞开", "artist": "赞美之泉", "date": "2026-02", "sheet": "https://11.400400.icu:9003/api/download/image?id=29516&timestamp=509562805&code=5827", "audio": "https://11.400400.icu:9003/api/download/music?id=12834&timestamp=509562866&code=20ef"}
+            {"id": 59, "title": "十字架", "artist": "赞美之泉", "date": "2026-02", "sheet": "https://34.400400.icu:9003/api/download/image?id=119252&timestamp=507638788&code=4aaf", "audio": "https://34.400400.icu:9003/api/download/music?id=76115&timestamp=507638811&code=84c8"}
         ];
 
         let weeklyIds = JSON.parse(localStorage.getItem('weeklyIds')) || [60, 61, 62];
@@ -275,15 +237,14 @@
         function save() { localStorage.setItem('worshipLibrary', JSON.stringify(allSongs)); localStorage.setItem('weeklyIds', JSON.stringify(weeklyIds)); }
         function renderAll() { renderHistory(); renderAdminInventory(); renderHomeSetlist(); if (typeof lucide !== 'undefined') lucide.createIcons(); }
 
-        // --- 播放逻辑 ---
+        // --- 核心控制 ---
         function playSongById(id, recordHistory = true) {
             const song = allSongs.find(s => s.id === id); if(!song) return;
             if (recordHistory && currentSongId !== null && currentSongId !== id) playbackHistory.push(currentSongId);
             currentSongId = id; audio.src = song.audio;
             document.getElementById('play-bar-title').innerText = song.title;
-            document.getElementById('display-title').innerText = song.title;
-            document.getElementById('hist-playing-title').innerText = song.title;
-            document.getElementById('hist-playing-artist').innerText = song.artist;
+            const dt = document.getElementById('display-title'); if(dt) dt.innerText = song.title;
+            const hpt = document.getElementById('hist-playing-title'); if(hpt) hpt.innerText = song.title;
             renderHomeSetlist(); renderHistory(); togglePlay(true);
         }
         function toggleShuffle() { isShuffle = !isShuffle; const btn = document.getElementById('shuffle-btn'); btn.className = isShuffle ? 'text-white' : 'text-zinc-600'; if (typeof lucide !== 'undefined') lucide.createIcons(); }
@@ -293,34 +254,21 @@
         }
         function prevSong() { if (playbackHistory.length > 0) playSongById(playbackHistory.pop(), false); else { const hIdx = allSongs.findIndex(s => s.id === currentSongId); playSongById(allSongs[(hIdx - 1 + allSongs.length) % allSongs.length].id, false); } }
 
-        // --- 页面路由 ---
         function showPage(p) {
             const pHist = document.getElementById('page-history'), pAdm = document.getElementById('page-admin'), pDon = document.getElementById('page-donate');
             if (pHist) pHist.classList.add('translate-y-full'); if (pAdm) pAdm.classList.add('translate-x-full'); if (pDon) pDon.classList.add('translate-y-full');
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
 
-            const donateImg = document.getElementById('donate-img');
             const items = ['donate-tag', 'donate-verse-1', 'donate-verse-2', 'donate-footer'];
-            if (donateImg) {
-                donateImg.classList.remove('animate-bloom');
-                items.forEach(id => { const el = document.getElementById(id); if (el) { el.style.animation = 'none'; el.offsetHeight; el.classList.remove('do-fade-up'); } });
-            }
-
-            if(p === 'history') { if (pHist) pHist.classList.remove('translate-y-full'); document.getElementById('nav-history')?.classList.add('active'); renderHistory(); }
-            else if(p === 'admin') { if (pAdm) pAdm.classList.remove('translate-x-full'); renderAdminInventory(); }
-            else if(p === 'donate') {
+            if (p === 'donate') {
                 if (pDon) pDon.classList.remove('translate-y-full'); document.getElementById('nav-donate')?.classList.add('active');
-                if (donateImg) {
-                    setTimeout(() => {
-                        donateImg.classList.add('animate-bloom');
-                        items.forEach(id => { const el = document.getElementById(id); if (el) { el.style.animation = ''; el.classList.add('do-fade-up'); } });
-                    }, 300);
-                }
-            } else { document.getElementById('nav-home')?.classList.add('active'); }
+                setTimeout(() => { items.forEach(id => { const el = document.getElementById(id); if (el) { el.style.animation = ''; el.classList.add('do-fade-up'); } }); }, 300);
+            } else if(p === 'history') { if (pHist) pHist.classList.remove('translate-y-full'); document.getElementById('nav-history')?.classList.add('active'); renderHistory(); }
+            else if(p === 'admin') { if (pAdm) pAdm.classList.remove('translate-x-full'); renderAdminInventory(); }
+            else { document.getElementById('nav-home')?.classList.add('active'); }
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
-        // --- 列表渲染逻辑 ---
         function renderHomeSetlist() {
             const container = document.getElementById('home-weekly-tracks'); if (!container) return;
             container.innerHTML = weeklyIds.map((id, index) => {
@@ -336,10 +284,10 @@
             const filtered = allSongs.filter(s => s.title.toLowerCase().includes(q) || s.artist.toLowerCase().includes(q));
             filtered.forEach(s => { groups[s.date] = groups[s.date] || []; groups[s.date].push(s); });
             container.innerHTML = Object.keys(groups).sort().reverse().map(date => `
-                <div class="mb-16 text-left"><div class="flex items-center gap-4 mb-8 text-orange-500 font-bold text-sm tracking-widest uppercase"><span>${date}</span><span class="h-px flex-1 bg-white/5"></span></div><div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                <div class="mb-16 text-left"><div class="flex items-center gap-4 mb-8 text-orange-500 font-bold text-sm uppercase"><span>${date}</span><span class="h-px flex-1 bg-white/5"></span></div><div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 ${groups[date].map(song => {
                     const isPlayingThis = song.id === currentSongId;
-                    return `<div onclick="playSongById(${song.id})" class="group relative aspect-[2/3] bg-zinc-900 rounded-lg overflow-hidden cursor-pointer hover:scale-105 transition-all ${isPlayingThis ? 'ring-2 ring-orange-500' : ''}"><img src="${song.sheet}" class="w-full h-full object-cover opacity-20 group-hover:opacity-40 transition-opacity"><div class="absolute inset-0 p-5 flex flex-col justify-end text-white text-left"><div class="text-[10px] text-orange-500 font-bold">${song.artist}</div><div class="text-sm font-bold leading-tight">${song.title}</div></div>${isPlayingThis ? '<div class="absolute top-3 right-3 bg-orange-500 p-1 rounded-full text-white"><i data-lucide="volume-2" class="w-3 h-3"></i></div>' : ''}</div>`;
+                    return `<div onclick="playSongById(${song.id})" class="group relative aspect-[2/3] bg-zinc-900 rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition-all ${isPlayingThis ? 'ring-2 ring-orange-500' : ''}"><img src="${song.sheet}" class="w-full h-full object-cover opacity-20 group-hover:opacity-40 transition-opacity"><div class="absolute inset-0 p-4 flex flex-col justify-end text-white text-left"><div class="text-[10px] text-orange-500 font-bold">${song.artist}</div><div class="text-sm font-bold leading-tight">${song.title}</div></div>${isPlayingThis ? '<div class="absolute top-2 right-2 bg-orange-500 p-1 rounded-full text-white"><i data-lucide="volume-2" class="w-3 h-3"></i></div>' : ''}</div>`;
                 }).join('')}</div></div>`).join('');
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
@@ -354,7 +302,6 @@
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
-        // --- 管理逻辑 ---
         function prepareEdit(id) {
             const song = allSongs.find(s => s.id === id); if (!song) return;
             editingId = id; document.getElementById('input-title').value = song.title; document.getElementById('input-artist').value = song.artist; document.getElementById('input-sheet').value = song.sheet; document.getElementById('input-audio').value = song.audio;
@@ -363,13 +310,13 @@
         function resetAdminForm() { editingId = null; document.querySelectorAll('#page-admin input').forEach(i => i.value = ""); document.getElementById('admin-form-title').innerText = "入库新曲目"; document.getElementById('save-btn').innerText = "确认保存"; document.getElementById('cancel-edit-btn').classList.add('hidden'); }
         function addNewSongToLibrary() {
             const t = document.getElementById('input-title').value, a = document.getElementById('input-artist').value, s = document.getElementById('input-sheet').value, u = document.getElementById('input-audio').value;
-            if(!t || !u) return alert("必填项缺失");
+            if(!t || !u) return alert("请填写信息");
             if (editingId) { const idx = allSongs.findIndex(x => x.id === editingId); if (idx > -1) allSongs[idx] = { ...allSongs[idx], title: t, artist: a, sheet: s, audio: u }; }
             else { allSongs.unshift({ id: Date.now(), title: t, artist: a, date: new Date().toISOString().slice(0,7), audio: u, sheet: s || "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1000" }); }
             save(); renderAll(); resetAdminForm();
         }
         function toggleWeekly(id) { if(weeklyIds.includes(id)) weeklyIds = weeklyIds.filter(i => i !== id); else weeklyIds.push(id); save(); renderAll(); }
-        function deleteSong(id) { if(confirm("确定彻底删除？")) { allSongs = allSongs.filter(s => s.id !== id); weeklyIds = weeklyIds.filter(i => i !== id); save(); renderAll(); } }
+        function deleteSong(id) { if(confirm("确定删除？")) { allSongs = allSongs.filter(s => s.id !== id); weeklyIds = weeklyIds.filter(i => i !== id); save(); renderAll(); } }
         function openAdminModal() { document.getElementById('admin-modal')?.classList.remove('hidden'); }
         function closeAdminModal() { document.getElementById('admin-modal')?.classList.add('hidden'); }
         function checkPassword() { if(document.getElementById('admin-password').value === '222221') { closeAdminModal(); showPage('admin'); } else alert("密码错误"); }
